@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lambda 表达式</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        h1 {
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            margin-top: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        pre {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            font-size: 0.9em;
+        }
+        code {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            background-color: #e8e8e8;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            border-radius: 0;
+        }
+        .explanation {
+            margin-bottom: 20px;
+        }
+        .analogy {
+            background-color: #e7f3fe;
+            border-left: 4px solid #3498db;
+            padding: 10px 15px;
+            margin: 15px 0;
+            font-style: italic;
+        }
+        strong {
+            color: #3498db;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Lambda 表达式</h1>
+        <!-- Lambda 表达式 -->
+        <section id="lambda-expressions">
+            <h2>Lambda 表达式 - 通俗讲解</h2>
+            <div class="explanation">
+                <p>想象一下，你正在组织一个派对，需要一些帮手来完成一些小任务。</p>
+                <p><strong>没有 Lambda 表达式的情况：</strong><br>
+                每次你需要一个帮手做一件特定的、一次性的小事，你都得：</p>
+                <ol>
+                    <li><strong>郑重其事地给这个帮手起个名字</strong>（比如“切水果专员张三”、“摆盘子专员李四”）。</li>
+                    <li><strong>详细地写下这个帮手的完整工作描述</strong>（比如“张三：拿起刀，把苹果切成块，把香蕉切成段……”）。</li>
+                    <li><strong>然后告诉派对主持人</strong>：“请张三来做切水果的工作。”</li>
+                </ol>
+                <p>这就像在编程中定义一个完整的、有名字的函数，即使这个函数你可能只用一次。</p>
+                <pre><code class="language-kotlin">
+// 传统方式：定义一个完整的函数
+fun double(x: Int): Int {
+    return x * 2
+}
+
+fun main() {
+    val numbers = listOf(1, 2, 3)
+    val doubledNumbers = numbers.map(::double) // 使用函数引用
+    println(doubledNumbers) // 输出 [2, 4, 6]
+}
+                </code></pre>
+                <p><strong>有了 Lambda 表达式，就像是：</strong><br>
+                你不再需要给每个临时帮手起正式的名字和写冗长的描述。你可以直接说：<br>
+                “嘿，（<strong>指向一个临时工</strong>），你，把这个数乘以 2。”<br>
+                或者<br>
+                “找个人，（<strong>做个手势表示操作</strong>），把这些水果切一下。”</p>
+                <p><strong>Lambda 表达式就是一个匿名的、临时的、迷你的“小函数”或“小任务指令”。</strong></p>
+            </div>
+
+            <h3>核心特点，通俗理解：</h3>
+            <ol>
+                <li><strong>匿名（没有名字）</strong>：
+                    <ul>
+                        <li>你不需要像 <code>fun myFunction()</code> 那样给它起个正式的名字。它就是一段代码块，直接定义要做什么。</li>
+                        <li><div class="analogy"><strong>比喻</strong>：就像街头艺人，没有正式的艺名，但能表演。</div></li>
+                    </ul>
+                </li>
+               <!-- ... (第二部分 HTML 代码) ... -->
+                <li><strong>简洁（代码量少）</strong>：
+                    <ul>
+                        <li>通常用于定义那些逻辑比较简单、只用一两次的操作，所以语法设计得很紧凑。</li>
+                        <li><div class="analogy"><strong>比喻</strong>：不是写一本厚厚的操作手册，而是一张简单明了的便签指令。</div></li>
+                    </ul>
+                </li>
+                <li><strong>可以作为参数传递</strong>：
+                    <ul>
+                        <li>这是 Lambda 最强大的地方！你可以把这个“小任务指令”直接交给其他函数去执行。</li>
+                        <li><div class="analogy"><strong>比喻</strong>：你写了个“把数字加倍”的便签，然后把这张便签递给一个叫 <code>map</code> 的“总管”，<code>map</code> 总管就会拿着你的便签对一堆数字逐个执行这个指令。</div></li>
+                    </ul>
+                </li>
+                <li><strong>可以从上下文中推断类型</strong>：
+                    <ul>
+                        <li>很多时候，你不需要明确写出 Lambda 表达式的参数类型或返回类型，Kotlin 编译器能“猜”出来。</li>
+                        <li><div class="analogy"><strong>比喻</strong>：你对一个成年人说“把这个苹果切了”，你不需要特地强调“用刀切”，他能明白。</div></li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>Lambda 表达式的基本结构（Kotlin 中）：</h3>
+            <p><code>{ 参数列表 -> 函数体 }</code></p>
+            <ul>
+                <li><strong><code>{ }</code> (花括号)</strong>：包围着整个 Lambda 表达式。</li>
+                <li><strong><code>参数列表</code> (可选)</strong>：这个小任务需要哪些输入。如果没有输入，可以省略。
+                    <ul><li>例如：<code>x</code> (一个参数), <code>(a, b)</code> (两个参数)</li></ul>
+                </li>
+                <li><strong><code>-></code> (箭头)</strong>：分隔参数列表和函数体。</li>
+                <li><strong><code>函数体</code></strong>：具体要执行的操作。
+                    <ul>
+                        <li>如果函数体只有一行，这一行默认就是返回值。</li>
+                        <li>如果有多行，最后一行表达式的结果是返回值。</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>看个例子，对比一下：</h3>
+            <p>假设我们有一个数字列表，想把每个数字都乘以 2。</p>
+            <p><strong>传统方式 (定义一个函数)：</strong></p>
+            <pre><code class="language-kotlin">
+fun doubleTheNumber(number: Int): Int {
+    return number * 2
+}
+val numbersForLambda = listOf(1, 2, 3) // Renamed to avoid conflict
+val doubledTraditional = numbersForLambda.map { doubleTheNumber(it) } // 或者 numbers.map(::doubleTheNumber)
+// doubledTraditional 会是 [2, 4, 6]
+println("Traditional: $doubledTraditional")
+            </code></pre>
+            <p><strong>使用 Lambda 表达式：</strong></p>
+            <pre><code class="language-kotlin">
+val numbersForLambda2 = listOf(1, 2, 3) // Renamed to avoid conflict
+
+// 完整形式的 Lambda
+val doubled1 = numbersForLambda2.map({ number: Int -> number * 2 })
+
+// Kotlin 的魔法：
+// 1. 如果 Lambda 是函数的最后一个参数，可以移到括号外
+val doubled2 = numbersForLambda2.map() { number: Int -> number * 2 }
+
+// 2. 如果函数只有一个 Lambda 参数，可以省略括号
+val doubled3 = numbersForLambda2.map { number: Int -> number * 2 }
+
+// 3. 如果参数类型可以推断出来，可以省略类型声明
+val doubled4 = numbersForLambda2.map { number -> number * 2 }
+
+// 4. 如果 Lambda 只有一个参数，可以用 `it` 隐式引用它
+val doubled5 = numbersForLambda2.map { it * 2 } // 最简洁！
+
+println("Lambda doubled1: $doubled1") // [2, 4, 6]
+println("Lambda doubled5: $doubled5") // [2, 4, 6]
+            </code></pre>
+            <p>在 <code>doubled5</code> 中，<code>{ it * 2 }</code> 就是一个 Lambda 表达式。</p>
+            <ul>
+                <li>它没有名字。</li>
+                <li>它很简洁。</li>
+                <li>它被传递给了 <code>map</code> 函数。<code>map</code> 函数会对 <code>numbersForLambda2</code> 列表中的每个元素（这里用 <code>it</code> 代表每个元素）执行这个 Lambda 定义的操作（乘以 2）。</li>
+            </ul>
+
+            <h3>总结一下 Lambda 的通俗意义：</h3>
+            <p>Lambda 表达式就是一种<strong>“随用随写，写完即焚”的小代码片段</strong>，特别适合传递给其他函数来定义一个临时的、具体的行为。它让代码更紧凑，尤其在处理集合数据或设置回调（当某事发生时执行的代码）时非常方便。</p>
+            <p>把它想象成一个<strong>“一次性的小指令”</strong>或者一个<strong>“匿名的临时工”</strong>，专门用来快速完成某个简单任务。</p>
+        </section>
+    </div> <!-- end .container -->
+</body>
+</html>

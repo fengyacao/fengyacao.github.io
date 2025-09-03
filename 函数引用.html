@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>函数引用</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        h1 {
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            margin-top: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        pre {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            font-size: 0.9em;
+        }
+        code {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            background-color: #e8e8e8;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            border-radius: 0;
+        }
+        .explanation {
+            margin-bottom: 20px;
+        }
+        .analogy {
+            background-color: #e7f3fe;
+            border-left: 4px solid #3498db;
+            padding: 10px 15px;
+            margin: 15px 0;
+            font-style: italic;
+        }
+        strong {
+            color: #3498db;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>函数引用</h1>
+
+        <!-- 函数引用 -->
+        <section id="function-references">
+            <h2>函数引用 (::) - 通俗讲解</h2>
+            <div class="explanation">
+                <p><code>::</code> 在 Kotlin 中被称为<strong>函数引用 (Function Reference)</strong> 或更广义地称为<strong>可调用引用 (Callable Reference)</strong>。</p>
+                <p>它允许你像操作一个普通值一样来引用一个<strong>已存在的、有名字的函数、属性或构造函数</strong>。</p>
+                <p>简单来说，<code>::</code> 的作用就是：<strong>“嘿，我不是要现在就调用这个函数/属性，而是想拿到一个指向它的‘指针’或‘名片’，这样我以后可以通过这个‘名片’来调用它，或者把它传递给其他需要函数作为参数的地方。”</strong></p>
+            </div>
+
+            <h3>主要用途和场景：</h3>
+            <h4>1. 引用顶层函数或成员函数：</h4>
+            <div class="explanation">
+                <ul>
+                    <li>当你需要将一个已定义的函数作为参数传递给另一个高阶函数（接收函数作为参数的函数）时。</li>
+                    <li>当你需要将一个函数赋值给一个函数类型的变量时。</li>
+                </ul>
+                <pre><code class="language-kotlin">
+fun sayHello(name: String) {
+    println("Hello, $name!")
+}
+
+class Greeter {
+    fun greet(message: String) {
+        println("Greeter says: $message")
+    }
+}
+
+fun main() { // Assuming this is within a main or similar executable scope
+    // 1. 引用顶层函数
+    val helloFunction: (String) -> Unit = ::sayHello
+    helloFunction("Alice") // 调用: Hello, Alice!
+
+    // 将函数引用传递给高阶函数 (比如 forEach)
+    val names = listOf("Bob", "Charlie")
+    names.forEach(::println) // println 是一个顶层函数
+
+    // 2. 引用成员函数 (需要一个类的实例)
+    val myGreeter = Greeter()
+    val greetFunction: (String) -> Unit = myGreeter::greet // 绑定到特定实例
+    greetFunction("Good morning") // 调用: Greeter says: Good morning
+
+    // 也可以引用未绑定的成员函数 (需要先提供实例才能调用)
+    val unboundGreet: (Greeter, String) -> Unit = Greeter::greet
+    unboundGreet(myGreeter, "How are you?") // 调用: Greeter says: How are you?
+    unboundGreet(Greeter(), "Another greeting") // 调用在另一个实例上
+}
+                </code></pre>
+            </div>
+
+            <!-- ... (第三部分 HTML 代码的开头) ... -->
+
+            <h4>2. 引用属性：</h4>
+            <div class="explanation">
+                <p>你可以获取一个指向属性的引用，这允许你后续通过这个引用来获取属性的值或（如果是可变属性）设置属性的值。这在某些反射或元编程场景中很有用。</p>
+                <pre><code class="language-kotlin">
+class UserRef(var name: String, val age: Int) // Renamed to avoid conflict
+
+// fun main() { // Assuming this is within a main or similar executable scope
+    val userForRef = UserRef("David", 30) // Renamed to avoid conflict
+
+    // 引用可变属性 (var)
+    val nameProp = UserRef::name
+    println("Prop get name: ${nameProp.get(userForRef)}") // 输出: David
+    nameProp.set(userForRef, "Daniel")
+    println("User name after set: ${userForRef.name}")         // 输出: Daniel
+
+    // 引用只读属性 (val)
+    val ageProp = UserRef::age
+    println("Prop get age: ${ageProp.get(userForRef)}")  // 输出: 30
+    // ageProp.set(userForRef, 31) // 编译错误，因为 age 是 val
+// }
+                </code></pre>
+            </div>
+
+            <h4>3. 引用构造函数：</h4>
+            <div class="explanation">
+                <p>你可以获取一个指向类构造函数的引用。这在你需要动态创建对象或者将构造逻辑作为参数传递时非常有用。</p>
+                <pre><code class="language-kotlin">
+class Message(val content: String)
+
+// fun main() { // Assuming this is within a main or similar executable scope
+    // 引用构造函数
+    val messageConstructor: (String) -> Message = ::Message
+
+    val msg1 = messageConstructor("Hello from constructor reference!")
+    println("Msg1 content: ${msg1.content}") // 输出: Hello from constructor reference!
+
+    // 假设有一个函数需要一个“工厂”来创建对象
+    fun createAndPrint(text: String, factory: (String) -> Message) {
+        val message = factory(text)
+        println("Created via factory: ${message.content}")
+    }
+
+    createAndPrint("Test message", ::Message) // 输出: Created via factory: Test message
+// }
+                </code></pre>
+            </div>
+
+            <h3>通俗比喻：</h3>
+            <div class="explanation">
+                <p>想象一下：</p>
+                <ul>
+                    <li><strong>函数调用 <code>sayHello("Alice")</code></strong>：就像你直接拿起电话打给 Alice 并和她说话。</li>
+                    <li><strong>函数引用 <code>::sayHello</code></strong>：就像你把 Alice 的电话号码写在一张纸条上。你现在并没有打电话，但你有了联系她的方式。你可以把这张纸条给你的朋友（另一个函数），你的朋友就可以用这个号码联系 Alice。</li>
+                </ul>
+            </div>
+
+            <h3>总结 <code>::</code> 的含义：</h3>
+            <ul>
+                <li>它不是立即执行函数或访问属性。</li>
+                <li>它创建了一个该可调用实体的<strong>引用</strong>或<strong>代理</strong>。</li>
+                <li>这个引用可以像其他值一样被存储、传递。</li>
+                <li>当你需要<strong>延迟执行</strong>、<strong>将行为作为数据传递</strong>，或者在某些框架（如序列化、依赖注入、UI事件处理）中指定要调用的代码时，函数/属性引用非常有用。</li>
+            </ul>
+            <p>它与 Lambda 表达式的区别在于：</p>
+            <ul>
+                <li><strong>Lambda 表达式 (<code>{ ... }</code>)</strong>：是定义一个<strong>新的、匿名的</strong>函数。</li>
+                <li><strong>函数引用 (<code>::functionName</code>)</strong>：是引用一个<strong>已经存在的、有名字的</strong>函数（或属性/构造函数）。</li>
+            </ul>
+            <p>两者都可以用于高阶函数期望一个函数类型参数的场景。选择哪个取决于你是否已经有一个合适的命名函数，或者是否需要一个临时的、内联的逻辑。</p>
+        </section>
+
+    </div> <!-- end .container -->
+</body>
+</html>
