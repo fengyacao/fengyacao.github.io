@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Kotlin 集合与数组简介</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container_main {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        h1, h2 { color: #333; }
+        .container { background-color: #f9f9f9; border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 5px;}
+        .container_2 { background-color: #e6f7f8; border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 5px;}
+        strong { color: #007bff; }
+        .analogy {
+            background-color: #e7f3fe;
+            border-left: 4px solid #3498db;
+            padding: 10px 15px;
+            margin: 15px 0;
+            font-style: italic;
+        }
+        nav {margin-left: 20px;}
+        nav ul { list-style-type: none; padding: 0; }
+        nav li { display: block;margin-bottom: 5px; /* 可选 */}
+        nav a { text-decoration: none; color: rgb(20, 182, 247); }
+        nav a:hover { text-decoration: underline; }
+        .toc { margin-bottom: 30px; padding: 10px; background-color: #eef; border-radius: 5px; }
+        .toc ul { list-style-type: none; padding-left: 0; }
+        .toc li a { text-decoration: none; color: #0056b3; }
+        .toc li a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container_main">
+    <h1>Kotlin 集合与数组简介</h1>
+    <nav>
+        <h2>目录</h2>
+        <ul>
+            <li><a href="#section1">一、Array (数组)</a></li>
+            <li><a href="#section2">二、Collection (集合总称 - 接口)</a></li>
+            <li><a href="#section3">三、List (列表)</a></li>
+            <li><a href="#section4">四、Set (集)</a></li>
+            <li><a href="#section5">五、Map (映射/字典)</a></li>
+            <li><a href="#section6">核心区别</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h2 id="section1">一、Array (数组)</h2>
+        <p><strong>固定大小</strong>的格子，装东西后<strong>格子数不变</strong>，但格子里东西<strong>可换</strong>。</p>
+        <p><em>例子：一个有10个固定座位的电影院排。</em></p>
+    
+    
+     <h3>Array 核心方法</h3>
+
+    <div class="toc">
+        <h4>目录</h4>
+        <ul>
+            <li><a href="#intro">1. 简介</a></li>
+            <li><a href="#creation">2. 创建数组</a></li>
+            <li><a href="#access-modify">3. 访问与修改</a></li>
+            <li><a href="#iteration-basic">4. 迭代与基本检查</a></li>
+            <li><a href="#common-extensions">5. 常用核心扩展函数</a></li>
+        </ul>
+    </div>
+
+    <div class="container_2">
+        <h4 id="intro">1. 简介</h4>
+        <p><code>Array&lt;T&gt;</code> 在 Kotlin 中代表一个<strong>固定大小</strong>的元素序列。一旦创建，其大小不能改变，但其内容（元素值）是<strong>可变的</strong>。</p>
+        <p class="note">Kotlin 也为基本数据类型提供了专门的数组，如 <code>IntArray</code>, <code>DoubleArray</code> 等，以避免自动装箱的开销。</p>
+    </div>
+
+    <div class="container_2">
+        <h4 id="creation">2. 创建数组</h4>
+        <ul>
+            <li>
+                <strong><code>arrayOf(element1, element2, ...)</code></strong>: 创建包含指定元素的数组。
+                <br><code>val names = arrayOf("Alice", "Bob", "Charlie")</code>
+            </li>
+            <li>
+                <strong><code>Array(size) { index -> value_expression }</code></strong>: 使用 lambda 表达式初始化每个元素。
+                <br><code>val squares = Array(3) { index -> (index + 1) * (index + 1) } // [1, 4, 9]</code>
+            </li>
+            <li>
+                <strong><code>intArrayOf(...)</code>, <code>doubleArrayOf(...)</code>, etc.</strong>: 创建特定基本类型的数组。
+                <br><code>val numbers = intArrayOf(10, 20, 30)</code>
+            </li>
+        </ul>
+    </div>
+
+    <div class="container_2">
+        <h4 id="access-modify">3. 访问与修改</h4>
+        <ul>
+            <li>
+                <strong><code>size</code></strong> (属性): 获取数组中元素的数量。
+                <br><code>println(names.size) // 输出: 3</code>
+            </li>
+            <li>
+                <strong><code>get(index)</code> 或 <code>[index]</code></strong>: 获取指定索引处的元素。
+                <br><code>val secondName = names[1] // "Bob"</code>
+            </li>
+            <li>
+                <strong><code>set(index, value)</code> 或 <code>[index] = value</code></strong>: 修改指定索引处的元素。
+                <br><code>names[0] = "Alicia" // names 现在是 ["Alicia", "Bob", "Charlie"]</code>
+            </li>
+            <li>
+                <strong><code>indices</code></strong> (属性): 返回数组的有效索引范围 (<code>IntRange</code>)。
+                <br><code>for (i in names.indices) { println(names[i]) }</code>
+            </li>
+        </ul>
+    </div>
+
+    <div class="container_2">
+        <h4 id="iteration-basic">4. 迭代与基本检查</h4>
+        <ul>
+            <li>
+                <strong>For-in 循环</strong>: 直接遍历数组元素。
+                <br><code>for (name in names) { println(name) }</code>
+            </li>
+            <li>
+                <strong><code>forEach { action }</code></strong> (扩展函数): 对每个元素执行操作。
+                <br><code>names.forEach { println("Name: $it") }</code>
+            </li>
+            <li>
+                <strong><code>isEmpty()</code> / <code>isNotEmpty()</code></strong> (扩展函数): 检查数组是否为空。
+                <br><code>println(names.isNotEmpty()) // 输出: true</code>
+            </li>
+            <li>
+                <strong><code>contains(element)</code></strong> (扩展函数): 检查数组是否包含指定元素。
+                <br><code>println(names.contains("Bob")) // 输出: true</code>
+            </li>
+        </ul>
+    </div>
+
+    <div class="container_2">
+        <h4 id="common-extensions">5. 常用核心扩展函数</h4>
+        <p class="note">这些扩展函数通常返回新的集合 (如 <code>List</code>)，不修改原始数组。</p>
+        <ul>
+            <li>
+                <strong><code>toList()</code></strong>: 将数组转换为一个新的<strong>只读</strong> <code>List</code>。
+                <br><code>val nameList = names.toList()</code>
+            </li>
+            <li>
+                <strong><code>toMutableList()</code></strong>: 将数组转换为一个新的<strong>可变</strong> <code>MutableList</code>。
+                <br><code>val mutableNames = names.toMutableList()</code>
+            </li>
+            <li>
+                <strong><code>filter { predicate }</code></strong>: 返回一个新列表，包含所有满足条件的元素。
+                <br><code>val bNames = names.filter { it.startsWith("B") } // ["Bob"]</code>
+            </li>
+            <li>
+                <strong><code>map { transform }</code></strong>: 返回一个新列表，其中每个元素是原始元素经过转换函数处理后的结果。
+                <br><code>val upperNames = names.map { it.toUpperCase() } // ["ALICIA", "BOB", "CHARLIE"]</code>
+            </li>
+            <li>
+                <strong><code>joinToString()</code></strong>: 将数组元素连接成一个字符串。
+                <br><code>println(names.joinToString(", ")) // 输出: "Alicia, Bob, Charlie"</code>
+            </li>
+            <li>
+                <strong><code>firstOrNull()</code> / <code>lastOrNull()</code></strong>: 返回第一个/最后一个元素，或在数组为空时返回 <code>null</code>。
+                <br><code>val first = names.firstOrNull()</code>
+            </li>
+             <li>
+                <strong><code>any { predicate }</code> / <code>all { predicate }</code></strong>: 检查是否有任何/所有元素满足条件。
+                <br><code>val hasShortName = names.any { it.length < 4 }</code>
+            </li>
+            <li>
+                <strong><code>sorted()</code> / <code>sortedDescending()</code></strong>: 返回一个包含排序后元素的新列表。
+                <br><code>val sortedNames = names.sorted()</code>
+            </li>
+        </ul>
+        <p class="note">对于<strong>原地修改</strong>数组的方法 (直接改变原数组)，常用的有：<code>sort()</code>, <code>reverse()</code>, <code>fill()</code>。但请注意它们与返回新集合的扩展函数的区别。</p>
+    </div>
+    <hr>
+    <p class="note">Kotlin 为 <code>Array</code> 提供了丰富的扩展函数，使其操作体验与标准集合非常相似。</p>
+</div>
+    <div class="container">
+        <h2 id="section2">二、Collection (集合总称 - 接口)</h2>
+        <p>所有“能装多个东西的容器”的<strong>通用规则</strong>，只看不改。</p>
+        <p><em>例子：“容器”这个概念。</em></p>
+
+        <h3>Collection 核心方法</h3>
+
+    <div class="toc">
+        <h4>目录</h4>
+        <ul>
+            <li><a href="#intro">1. 简介</a></li>
+            <li><a href="#core-interface-methods">2. 核心接口方法</a></li>
+            <li><a href="#essential-extensions">3. 常用核心扩展函数</a></li>
+        </ul>
+    </div>
+
+    <div class="container_2">
+        <h4 id="intro">1. 简介</h4>
+        <p><code>Collection&lt;T&gt;</code> 是 Kotlin 集合框架中的一个基础<strong>只读</strong>接口。它代表了一组对象的通用概念，是 <code>List&lt;T&gt;</code> 和 <code>Set&lt;T&gt;</code> 的父接口。</p>
+        <p class="note">由于是只读的，它不包含修改集合的方法（如添加、删除）。这些由 <code>MutableCollection&lt;T&gt;</code> 提供。</p>
+    </div>
+
+    <div class="container_2">
+        <h4 id="core-interface-methods">2. 核心接口方法 (直接定义在 <code>Collection&lt;T&gt;</code>)</h4>
+        <ul>
+            <li>
+                <strong><code>size</code></strong> (属性): 返回集合中元素的数量。
+                <br><code>val numbers = listOf(1, 2, 3)</code>
+                <br><code>println(numbers.size) // 输出: 3</code>
+            </li>
+            <li>
+                <strong><code>isEmpty()</code></strong>: 判断集合是否为空。
+                <br><code>val emptyList = listOf&lt;String&gt;()</code>
+                <br><code>println(emptyList.isEmpty()) // 输出: true</code>
+            </li>
+            <li>
+                <strong><code>contains(element: T)</code></strong>: 检查集合是否包含指定的元素。
+                <br><code>println(numbers.contains(2)) // 输出: true</code>
+            </li>
+            <li>
+                <strong><code>containsAll(elements: Collection&lt;T&gt;)</code></strong>: 检查集合是否包含另一个集合中的所有元素。
+                <br><code>val subset = listOf(1, 3)</code>
+                <br><code>println(numbers.containsAll(subset)) // 输出: true</code>
+            </li>
+            <li>
+                <strong><code>iterator()</code></strong> (继承自 <code>Iterable&lt;T&gt;</code>): 返回一个迭代器，用于遍历集合。
+                <br><code>for (item in numbers) { /* ... */ } // for-in 循环内部使用 iterator</code>
+            </li>
+        </ul>
+    </div>
+
+    <div class="container_2">
+        <h4 id="essential-extensions">3. 常用核心扩展函数</h4>
+        <p class="note">这些函数非常常用，并且可以作用于任何 <code>Collection</code> 类型的对象。</p>
+        <ul>
+            <li>
+                <strong><code>forEach { action }</code></strong>: 对集合中的每个元素执行给定的操作。
+                <br><code>numbers.forEach { println(it) }</code>
+            </li>
+            <li>
+                <strong><code>isNotEmpty()</code></strong>: 判断集合是否<strong>不</strong>为空。
+                <br><code>println(numbers.isNotEmpty()) // 输出: true</code>
+            </li>
+            <li>
+                <strong><code>any { predicate }</code></strong>: 判断集合中是否<strong>至少有一个</strong>元素满足条件。
+                <br><code>println(numbers.any { it > 2 }) // 输出: true</code>
+            </li>
+            <li>
+                <strong><code>all { predicate }</code></strong>: 判断集合中是否<strong>所有</strong>元素都满足条件。
+                <br><code>println(numbers.all { it < 5 }) // 输出: true</code>
+            </li>
+            <li>
+                <strong><code>filter { predicate }</code></strong>: 返回一个<strong>新列表</strong>，包含所有满足条件的元素。
+                <br><code>val evens = numbers.filter { it % 2 == 0 } // evens 是 [2] (如果 numbers 是 [1,2,3])</code>
+            </li>
+            <li>
+                <strong><code>map { transform }</code></strong>: 返回一个<strong>新列表</strong>，其中每个元素是原始元素经过转换函数处理后的结果。
+                <br><code>val squared = numbers.map { it * it } // squared 是 [1, 4, 9]</code>
+            </li>
+            <li>
+                <strong><code>firstOrNull()</code></strong>: 返回集合的第一个元素，如果集合为空则返回 <code>null</code>。
+                <br><code>println(numbers.firstOrNull()) // 输出: 1</code>
+            </li>
+            <li>
+                <strong><code>lastOrNull()</code></strong>: 返回集合的最后一个元素，如果集合为空则返回 <code>null</code>。
+                <br><code>println(numbers.lastOrNull()) // 输出: 3</code>
+            </li>
+             <li>
+                <strong><code>joinToString()</code></strong>: 将集合元素连接成一个字符串，可以指定分隔符等。
+                <br><code>println(numbers.joinToString(separator = "-")) // 输出: "1-2-3"</code>
+            </li>
+            <li>
+                <strong><code>toList()</code></strong>: (主要用于 <code>Iterable</code>，但 <code>Collection</code> 本身就是 <code>Iterable</code>) 创建一个新的只读 <code>List</code> 副本。
+                <br><code>val listCopy = numbers.toList()</code>
+            </li>
+        </ul>
+    </div>
+    <hr>
+    <p class="note">这只是 <code>Collection</code> 及其扩展函数中最常用的一部分。Kotlin 标准库为集合提供了非常丰富和强大的操作API。</p>
+    </div>
+
+    <div class="container">
+        <h2 id="section3">三、List (列表)</h2>
+        <p><strong>排好队的</strong>东西，<strong>顺序固定</strong>，<strong>可重复</strong>。像数组但更灵活。</p>
+        <p><strong>MutableList</strong>: 队伍可增减队员，队员可换。</p>
+        <p><em>例子：购物清单 (可重复，有顺序)。</em></p>
+
+    <h3>List核心方法</h3>
+
+    <div class="toc">
+        <h4>目录</h4>
+        <ul>
+            <li><a href="#intro">1. 简介 (List vs MutableList)</a></li>
+            <li><a href="#creation">2. 创建列表</a></li>
+            <li><a href="#readonly-list-methods">3. 只读列表 (<code>List&lt;T&gt;</code>) 常用方法</a></li>
+            <li><a href="#mutable-list-methods">4. 可变列表 (<code>MutableList&lt;T&gt;</code>) 常用方法</a></li>
+            <li><a href="#common-extensions">5. 通用核心扩展函数 (适用于 List 和 MutableList)</a></li>
+        </ul>
+    </div>
+
+    <div class="container_2">
+        <h4 id="intro">1. 简介 (List vs MutableList)</h4>
+        <p><code>List&lt;T&gt;</code> 在 Kotlin 中是一个<strong>有序</strong>的集合，允许存储重复的元素。它继承自 <code>Collection&lt;T&gt;</code>。</p>
+        <ul>
+            <li><strong><code>List&lt;T&gt;</code></strong>: 是一个<strong>只读</strong>列表。你不能向其添加、删除或修改元素（一旦创建）。</li>
+            <li><strong><code>MutableList&lt;T&gt;</code></strong>: 继承自 <code>List&lt;T&gt;</code> 和 <code>MutableCollection&lt;T&gt;</code>，是一个<strong>可变</strong>列表，允许修改其内容。</li>
+        </ul>
+    </div>
+
+    <div class="container_2">
+        <h4 id="creation">2. 创建列表</h4>
+        <ul>
+            <li>
+                <strong><code>listOf(element1, element2, ...)</code></strong>: 创建一个只读列表 (<code>List&lt;T&gt;</code>)。
+                <br><code>val readOnlyNumbers = listOf(1, 2, 3, 2)</code>
+            </li>
+            <li>
+                <strong><code>mutableListOf(element1, element2, ...)</code></strong>: 创建一个可变列表 (<code>MutableList&lt;T&gt;</code>，通常是 <code>ArrayList</code>)。
+                <br><code>val mutableNames = mutableListOf("Alice", "Bob")</code>
+            </li>
+            <li>
+                <strong><code>ArrayList&lt;T&gt;(...)</code></strong>: 直接创建 <code>ArrayList</code> 实例 (一种常见的 <code>MutableList</code> 实现)。
+                <br><code>val moreNames = ArrayList&lt;String&gt;()</code>
+            </li>
+             <li>
+                <strong><code>emptyList&lt;T&gt;()</code></strong>: 创建一个空的只读列表。
+                <br><code>val noItems = emptyList&lt;Int&gt;()</code>
+            </li>
+        </ul>
+    </div>
+
+    <div class="container_2">
+        <h4 id="readonly-list-methods">3. 只读列表 (<code>List&lt;T&gt;</code>) 常用方法</h4>
+        <p class="note">这些方法也适用于 <code>MutableList&lt;T&gt;</code>，因为它是 <code>List&lt;T&gt;</code> 的子类型。</p>
+        <ul>
+            <li>
+                <strong><code>size</code></strong> (属性): 获取列表中元素的数量。
+                <br><code>println(readOnlyNumbers.size) // 输出: 4</code>
+            </li>
+            <li>
+                <strong><code>get(index: Int)</code> 或 <code>[index]</code></strong>: 获取指定索引处的元素。
+                <br><code>val thirdNumber = readOnlyNumbers[2] // 3</code>
+            </li>
+            <li>
+                <strong><code>isEmpty()</code></strong>: 判断列表是否为空。
+                <br><code>println(readOnlyNumbers.isEmpty()) // 输出: false</code>
+            </li>
+            <li>
+                <strong><code>contains(element: T)</code></strong>: 检查列表是否包含指定的元素。
+                <br><code>println(readOnlyNumbers.contains(2)) // 输出: true</code>
+            </li>
+            <li>
+                <strong><code>indexOf(element: T)</code></strong>: 返回指定元素在列表中首次出现的索引，如果不存在则返回 -1。
+                <br><code>println(readOnlyNumbers.indexOf(2)) // 输出: 1</code>
+            </li>
+            <li>
+                <strong><code>lastIndexOf(element: T)</code></strong>: 返回指定元素在列表中最后一次出现的索引，如果不存在则返回 -1。
+                <br><code>println(readOnlyNumbers.lastIndexOf(2)) // 输出: 3</code>
+            </li>
+            <li>
+                <strong><code>subList(fromIndex: Int, toIndex: Int)</code></strong>: 返回列表中指定范围的一个视图 (新的只读列表)。
+                <br><code>val sub = readOnlyNumbers.subList(1, 3) // sub 是 [2, 3]</code>
+            </li>
+        </ul>
+    </div>
+
+    <div class="container_2">
+        <h4 id="mutable-list-methods">4. 可变列表 (<code>MutableList&lt;T&gt;</code>) 常用方法</h4>
+        <p class="note">这些方法用于修改列表内容，因此只适用于 <code>MutableList&lt;T&gt;</code>。</p>
+        <ul>
+            <li>
+                <strong><code>add(element: T)</code></strong>: 在列表末尾添加一个元素。
+                <br><code>mutableNames.add("Charlie") // mutableNames 现在是 ["Alice", "Bob", "Charlie"]</code>
+            </li>
+            <li>
+                <strong><code>add(index: Int, element: T)</code></strong>: 在指定索引处插入一个元素。
+                <br><code>mutableNames.add(1, "Zoe") // mutableNames 现在是 ["Alice", "Zoe", "Bob", "Charlie"]</code>
+            </li>
+            <li>
+                <strong><code>remove(element: T)</code></strong>: 从列表中移除首次出现的指定元素。如果成功移除返回 <code>true</code>。
+                <br><code>mutableNames.remove("Bob")</code>
+            </li>
+            <li>
+                <strong><code>removeAt(index: Int)</code></strong>: 移除指定索引处的元素，并返回被移除的元素。
+                <br><code>val removedName = mutableNames.removeAt(0) // 移除了 "Alice"</code>
+            </li>
+            <li>
+                <strong><code>set(index: Int, element: T)</code> 或 <code>[index] = element</code></strong>: 替换指定索引处的元素。
+                <br><code>mutableNames[0] = "David" // 替换了 "Zoe" (假设上一步已执行)</code>
+            </li>
+            <li>
+                <strong><code>clear()</code></strong>: 移除列表中的所有元素。
+                <br><code>mutableNames.clear() // mutableNames 现在是空列表</code>
+            </li>
+            <li>
+                <strong><code>addAll(elements: Collection&lt;T&gt;)</code></strong>: 将另一个集合中的所有元素添加到列表末尾。
+                <br><code>val newNames = listOf("Eve", "Frank")</code>
+                <br><code>mutableNames.addAll(newNames) // 假设 mutableNames 之前是空的，现在是 ["Eve", "Frank"]</code>
+            </li>
+            <li>
+                <strong><code>removeAll(elements: Collection&lt;T&gt;)</code></strong>: 移除列表中所有也存在于指定集合中的元素。
+                <br><code>mutableNames.removeAll(listOf("Alice", "Frank"))</code>
+            </li>
+             <li>
+                <strong><code>retainAll(elements: Collection&lt;T&gt;)</code></strong>: 仅保留列表中那些也存在于指定集合中的元素。
+                <br><code>mutableNames.retainAll(listOf("Eve")) // 如果之前是 ["Eve", "Frank"], 现在是 ["Eve"]</code>
+            </li>
+        </ul>
+    </div>
+
+     <div class="container_2">
+        <h4 id="common-extensions">5. 通用核心扩展函数 (适用于 List 和 MutableList)</h4>
+        <p class="note">这些扩展函数非常常用，并且不修改原始列表（除非另有说明），而是返回新的结果或执行操作。</p>
+        <ul>
+            <li>
+                <strong><code>forEach { action }</code></strong>: 对列表中的每个元素执行给定的操作。
+                <br><code>readOnlyNumbers.forEach { println(it * 2) }</code>
+            </li>
+            <li>
+                <strong><code>isNotEmpty()</code></strong>: 判断列表是否<strong>不</strong>为空。
+                <br><code>println(readOnlyNumbers.isNotEmpty()) // 输出: true</code>
+            </li>
+            <li>
+                <strong><code>filter { predicate }</code></strong>: 返回一个<strong>新列表</strong>，包含所有满足条件的元素。
+                <br><code>val positiveNumbers = readOnlyNumbers.filter { it > 0 }</code>
+            </li>
+           <li>
+                <strong><code>map { transform }</code></strong>: 返回一个<strong>新列表</strong>，其中每个元素是原始元素经过转换函数处理后的结果。
+                <br><code>val stringNumbers = readOnlyNumbers.map { "Number: $it" }</code>
+            </li>
+            <li>
+                <strong><code>first()</code> / <code>firstOrNull()</code></strong>: 返回列表的第一个元素。<code>first()</code> 在列表为空时抛异常，<code>firstOrNull()</code> 返回 <code>null</code>。
+                <br><code>val firstItem = readOnlyNumbers.firstOrNull()</code>
+            </li>
+            <li>
+                <strong><code>last()</code> / <code>lastOrNull()</code></strong>: 返回列表的最后一个元素。<code>last()</code> 在列表为空时抛异常，<code>lastOrNull()</code> 返回 <code>null</code>。
+                <br><code>val lastItem = readOnlyNumbers.lastOrNull()</code>
+            </li>
+            <li>
+                <strong><code>joinToString()</code></strong>: 将列表元素连接成一个字符串。
+                <br><code>println(mutableNames.joinToString(separator = " | "))</code>
+            </li>
+            <li>
+                <strong><code>sorted()</code> / <code>sortedDescending()</code></strong>: 返回一个包含排序后元素的新列表。
+                <br><code>val sortedNumbers = readOnlyNumbers.sorted()</code>
+            </li>
+            <li>
+                <strong><code>reversed()</code></strong>: 返回一个包含反转顺序元素的新列表。
+                <br><code>val reversedNumbers = readOnlyNumbers.reversed()</code>
+            </li>
+            <li>
+                <strong><code>shuffled()</code></strong>: 返回一个包含随机打乱顺序元素的新列表。
+                <br><code>val shuffledNumbers = readOnlyNumbers.shuffled()</code>
+            </li>
+            <li>
+                <strong><code>distinct()</code></strong>: 返回一个包含去重后元素的新列表 (保持原顺序)。
+                <br><code>val uniqueNumbers = listOf(1, 2, 2, 3, 1).distinct() // [1, 2, 3]</code>
+            </li>
+            <li>
+                <strong><code>slice(indices: IntRange)</code> 或 <code>slice(indices: Iterable&lt;Int&gt;)</code></strong>: 返回包含指定索引范围或索引集合的元素的新列表。
+                <br><code>val sliced = readOnlyNumbers.slice(0..1) // [1, 2] (假设 readOnlyNumbers 是 [1,2,3,2])</code>
+            </li>
+        </ul>
+    </div>
+    <hr>
+    <p class="note"><code>List</code> 和 <code>MutableList</code> 共享了大量来自 <code>Collection</code> 和 <code>Iterable</code> 的强大扩展函数。这里列出的是特定于列表或在列表上下文中特别常用的方法。</p>
+    </div>
+
+    <div class="container">
+        <h2 id="section4">四、Set (集)</h2>
+        <p>一堆<strong>不重复的</strong>东西，通常<strong>不关心顺序</strong>。</p>
+        <p><strong>MutableSet</strong>: 可往堆里加/拿东西，但重复的自动忽略。</p>
+        <p><em>例子：你拥有的不同种类的邮票 (每种只有一张)。</em></p>
+
+
+    <h3>Set核心方法</h3>
+
+    <div class="toc">
+        <h4>目录</h4>
+        <ul>
+            <li><a href="#intro">1. 简介 (Set vs MutableSet)</a></li>
+            <li><a href="#creation">2. 创建 Set</a></li>
+            <li><a href="#readonly-set-methods">3. 只读 Set (<code>Set&lt;T&gt;</code>) 常用方法</a></li>
+            <li><a href="#mutable-set-methods">4. 可变 Set (<code>MutableSet&lt;T&gt;</code>) 常用方法</a></li>
+            <li><a href="#common-extensions">5. 通用核心扩展函数 (适用于 Set 和 MutableSet)</a></li>
+            <li><a href="#set-operations">6. 特有的 Set 操作 (扩展函数)</a></li>
+        </ul>
+    </div>
+
+    <div class="container_2">
+        <h4 id="intro">1. 简介 (Set vs MutableSet)</h4>
+        <p><code>Set&lt;T&gt;</code> 在 Kotlin 中是一个存储<strong>唯一</strong>元素的集合。它不保证元素的顺序（尽管某些实现如 <code>LinkedHashSet</code> 会保持插入顺序）。它继承自 <code>Collection&lt;T&gt;</code>。</p>
+        <ul>
+            <li><strong><code>Set&lt;T&gt;</code></strong>: 是一个<strong>只读</strong> Set。你不能向其添加或删除元素（一旦创建）。</li>
+            <li><strong><code>MutableSet&lt;T&gt;</code></strong>: 继承自 <code>Set&lt;T&gt;</code> 和 <code>MutableCollection&lt;T&gt;</code>，是一个<strong>可变</strong> Set，允许修改其内容。</li>
+        </ul>
+        <p class="note">由于 Set 中的元素是唯一的，尝试添加一个已存在的元素到 <code>MutableSet</code> 中不会产生任何效果，也不会报错。</p>
+    </div>
+
+    <div class="container_2">
+        <h4 id="creation">2. 创建 Set</h4>
+        <ul>
+            <li>
+                <strong><code>setOf(element1, element2, ...)</code></strong>: 创建一个只读 Set (<code>Set&lt;T&gt;</code>)。重复的元素会被忽略。
+                <br><code>val readOnlyColors = setOf("Red", "Green", "Blue", "Red") // 实际存储: {"Red", "Green", "Blue"}</code>
+            </li>
+            <li>
+                <strong><code>mutableSetOf(element1, element2, ...)</code></strong>: 创建一个可变 Set (<code>MutableSet&lt;T&gt;</code>，通常是 <code>LinkedHashSet</code>，保持插入顺序)。
+                <br><code>val mutableShapes = mutableSetOf("Circle", "Square")</code>
+            </li>
+            <li>
+                <strong><code>HashSet&lt;T&gt;(...)</code></strong>: 直接创建 <code>HashSet</code> 实例 (不保证顺序)。
+                <br><code>val moreItems = HashSet&lt;Int&gt;()</code>
+            </li>
+             <li>
+                <strong><code>LinkedHashSet&lt;T&gt;(...)</code></strong>: 直接创建 <code>LinkedHashSet</code> 实例 (保持插入顺序)。
+                <br><code>val orderedSet = LinkedHashSet&lt;String&gt;()</code>
+            </li>
+             <li>
+                <strong><code>emptySet&lt;T&gt;()</code></strong>: 创建一个空的只读 Set。
+                <br><code>val noElements = emptySet&lt;Char&gt;()</code>
+            </li>
+        </ul>
+    </div>
+
+    <div class="container_2">
+        <h4 id="readonly-set-methods">3. 只读 Set (<code>Set&lt;T&gt;</code>) 常用方法</h4>
+        <p class="note">这些方法也适用于 <code>MutableSet&lt;T&gt;</code>。</p>
+        <ul>
+            <li>
+                <strong><code>size</code></strong> (属性): 获取 Set 中元素的数量。
+                <br><code>println(readOnlyColors.size) // 输出: 3</code>
+            </li>
+            <li>
+                <strong><code>isEmpty()</code></strong>: 判断 Set 是否为空。
+                <br><code>println(readOnlyColors.isEmpty()) // 输出: false</code>
+            </li>
+            <li>
+                <strong><code>contains(element: T)</code></strong>: 检查 Set 是否包含指定的元素。这是 Set 的核心高效操作。
+                <br><code>println(readOnlyColors.contains("Green")) // 输出: true</code>
+            </li>
+            <li>
+                <strong><code>containsAll(elements: Collection&lt;T&gt;)</code></strong>: 检查 Set 是否包含另一个集合中的所有元素。
+                <br><code>val someColors = listOf("Red", "Blue")</code>
+                <br><code>println(readOnlyColors.containsAll(someColors)) // 输出: true</code>
+            </li>
+        </ul>
+    </div>
+
+    <div class="container_2">
+        <h4 id="mutable-set-methods">4. 可变 Set (<code>MutableSet&lt;T&gt;</code>) 常用方法</h4>
+        <p class="note">这些方法用于修改 Set 内容，因此只适用于 <code>MutableSet&lt;T&gt;</code>。</p>
+        <ul>
+            <li>
+                <strong><code>add(element: T)</code></strong>: 向 Set 中添加一个元素。如果元素已存在，Set 不变，方法返回 <code>false</code>；否则添加成功返回 <code>true</code>。
+                <br><code>val added = mutableShapes.add("Triangle") // true, mutableShapes: {"Circle", "Square", "Triangle"}</code>
+                <br><code>val notAdded = mutableShapes.add("Circle") // false, mutableShapes 仍然是 {"Circle", "Square", "Triangle"}</code>
+            </li>
+            <li>
+                <strong><code>remove(element: T)</code></strong>: 从 Set 中移除指定的元素。如果元素存在并被移除，返回 <code>true</code>；否则返回 <code>false</code>。
+                <br><code>val removed = mutableShapes.remove("Square") // true</code>
+            </li>
+            <li>
+                <strong><code>clear()</code></strong>: 移除 Set 中的所有元素。
+                <br><code>mutableShapes.clear() // mutableShapes 现在是空 Set</code>
+            </li>
+            <li>
+                <strong><code>addAll(elements: Collection&lt;T&gt;)</code></strong>: 将另一个集合中的所有元素添加到 Set 中（重复的会被忽略）。
+                <br><code>mutableShapes.addAll(listOf("Star", "Circle", "Star")) // mutableShapes: {"Star", "Circle"} (假设之前为空)</code>
+            </li>
+            <li>
+                <strong><code>removeAll(elements: Collection&lt;T&gt;)</code></strong>: 移除 Set 中所有也存在于指定集合中的元素。
+                <br><code>mutableShapes.removeAll(listOf("Circle", "Hexagon"))</code>
+            </li>
+             <li>
+                <strong><code>retainAll(elements: Collection&lt;T&gt;)</code></strong>: 仅保留 Set 中那些也存在于指定集合中的元素。
+                <br><code>mutableShapes.retainAll(listOf("Star", "Moon"))</code>
+            </li>
+        </ul>
+    </div>
+
+     <div class="container_2">
+        <h4 id="common-extensions">5. 通用核心扩展函数 (适用于 Set 和 MutableSet)</h4>
+        <p class="note">这些扩展函数与 List 和其他 Collection 类型共享，非常常用。</p>
+        <ul>
+            <li>
+                <strong><code>forEach { action }</code></strong>: 对 Set 中的每个元素执行给定的操作。
+                <br><code>readOnlyColors.forEach { println("Color: $it") }</code>
+            </li>
+            <li>
+                <strong><code>isNotEmpty()</code></strong>: 判断 Set 是否<strong>不</strong>为空。
+            </li>
+            <li>
+                <strong><code>filter { predicate }</code></strong>: 返回一个<strong>新列表</strong> (注意：不是 Set)，包含所有满足条件的元素。
+                <br><code>val longColorNames = readOnlyColors.filter { it.length > 4 } // 结果是 List</code>
+            </li>
+            <li>
+                <strong><code>map { transform }</code></strong>: 返回一个<strong>新列表</strong> (注意：不是 Set)，其中每个元素是原始元素经过转换函数处理后的结果。
+                <br><code>val colorLengths = readOnlyColors.map { it.length } // 结果是 List</code>
+            </li>
+            <li>
+                <strong><code>firstOrNull()</code> / <code>lastOrNull()</code></strong>: 返回 Set 的第一个/最后一个元素（如果 Set 保持顺序，如 <code>LinkedHashSet</code>）。如果 Set 为空或不保证顺序，行为可能不确定或返回任意元素。
+            </li>
+            <li>
+                <strong><code>joinToString()</code></strong>: 将 Set 元素连接成一个字符串。
+            </li>
+            <li>
+                <strong><code>toList()</code> / <code>toMutableList()</code></strong>: 将 Set 转换为 List。
+            </li>
+            <li>
+                <strong><code>any { predicate }</code></strong>: 判断 Set 中是否<strong>所有</strong>元素都满足条件。
+                <br><code>val allLongNames = readOnlyColors.all { it.length > 2 } // true</code>
+            </li>
+        </ul>
+    </div>
+
+    <div class="container_2">
+        <h4 id="set-operations">6. 特有的 Set 操作 (扩展函数)</h4>
+        <p class="note">这些是集合论中常见的操作，对于 Set 类型尤其有用，通常返回新的 Set。</p>
+        <ul>
+            <li>
+                <strong><code>union(other: Iterable&lt;T&gt;)</code></strong>: 返回包含两个集合所有元素的新 Set (并集)。
+                <br><code>val set1 = setOf(1, 2, 3)</code>
+                <br><code>val set2 = setOf(3, 4, 5)</code>
+                <br><code>val unionSet = set1.union(set2) // {1, 2, 3, 4, 5}</code>
+            </li>
+            <li>
+                <strong><code>intersect(other: Iterable&lt;T&gt;)</code></strong>: 返回两个集合共同元素的新 Set (交集)。
+                <br><code>val intersectSet = set1.intersect(set2) // {3}</code>
+            </li>
+            <li>
+                <strong><code>subtract(other: Iterable&lt;T&gt;)</code></strong>: 返回第一个集合中存在但第二个集合中不存在的元素的新 Set (差集)。
+                <br><code>val subtractSet = set1.subtract(set2) // {1, 2}</code>
+                <br><code>val subtractSet2 = set2.subtract(set1) // {4, 5}</code>
+            </li>
+        </ul>
+    </div>
+    <hr>
+    <p class="note"><code>Set</code> 的核心优势在于其高效的 <code>contains</code> 检查和保证元素唯一性。许多通用的集合扩展函数也适用于它，但要注意某些操作（如 <code>map</code>, <code>filter</code>）默认返回 <code>List</code>。</p>
+    </div>
+
+    <div class="container">
+        <h2 id="section5">五、Map (映射/字典)</h2>
+        <p><strong>键值对</strong>的集合，用唯一的“钥匙”(Key)找对应的“宝贝”(Value)。<strong>钥匙不重复</strong>。</p>
+        <p><strong>MutableMap</strong>: 可增删改宝贝和对应的钥匙。</p>
+        <p><em>例子：电话簿 (姓名是钥匙，电话号码是宝贝)。</em></p>
+
+    <h3>Map 核心方法</h3>
+
+    <div class="toc">
+        <h4>目录</h4>
+        <ul>
+            <li><a href="#intro">1. 简介 (Map vs MutableMap)</a></li>
+            <li><a href="#creation">2. 创建 Map</a></li>
+            <li><a href="#readonly-map-methods">3. 只读 Map (<code>Map&lt;K, V&gt;</code>) 常用方法</a></li>
+            <li><a href="#mutable-map-methods">4. 可变 Map (<code>MutableMap&lt;K, V&gt;</code>) 常用方法</a></li>
+            <li><a href="#accessing-entries-keys-values">5. 访问条目、键和值</a></li>
+            <li><a href="#common-extensions">6. 通用核心扩展函数</a></li>
+        </ul>
+    </div>
+
+    <div class="container_2">
+        <h4 id="intro">1. 简介 (Map vs MutableMap)</h4>
+        <p><code>Map&lt;K, V&gt;</code> 在 Kotlin 中是一个存储<strong>键值对</strong> (key-value pairs) 的集合。每个键 (key) 在 Map 中是唯一的，并映射到一个值 (value)。Map 不保证键值对的顺序（尽管某些实现如 <code>LinkedHashMap</code> 会保持插入顺序）。</p>
+        <ul>
+            <li><strong><code>Map&lt;K, V&gt;</code></strong>: 是一个<strong>只读</strong> Map。你不能向其添加、删除或修改键值对（一旦创建）。</li>
+            <li><strong><code>MutableMap&lt;K, V&gt;</code></strong>: 继承自 <code>Map&lt;K, V&gt;</code>，是一个<strong>可变</strong> Map，允许修改其内容。</li>
+        </ul>
+    </div>
+
+    <div class="container_2">
+        <h4 id="creation">2. 创建 Map</h4>
+        <ul>
+            <li>
+                <strong><code>mapOf(pair1, pair2, ...)</code></strong>: 使用 <code>to</code> 中缀函数创建键值对来创建一个只读 Map。
+                <br><code>val readOnlyAges = mapOf("Alice" to 30, "Bob" to 25, "Carol" to 35)</code>
+            </li>
+            <li>
+                <strong><code>mutableMapOf(pair1, pair2, ...)</code></strong>: 创建一个可变 Map (通常是 <code>LinkedHashMap</code>，保持插入顺序)。
+                <br><code>val mutableScores = mutableMapOf("Math" to 90, "Science" to 85)</code>
+            </li>
+            <li>
+                <strong><code>HashMap&lt;K, V&gt;(...)</code></strong>: 直接创建 <code>HashMap</code> 实例 (不保证顺序)。
+                <br><code>val userMap = HashMap&lt;Int, String&gt;()</code>
+            </li>
+             <li>
+                <strong><code>LinkedHashMap&lt;K, V&gt;(...)</code></strong>: 直接创建 <code>LinkedHashMap</code> 实例 (保持插入顺序)。
+                <br><code>val orderedMap = LinkedHashMap&lt;String, Int&gt;()</code>
+            </li>
+             <li>
+                <strong><code>emptyMap&lt;K, V&gt;()</code></strong>: 创建一个空的只读 Map。
+                <br><code>val noData = emptyMap&lt;String, Double&gt;()</code>
+            </li>
+        </ul>
+    </div>
+
+    <div class="container_2">
+        <h4 id="readonly-map-methods">3. 只读 Map (<code>Map&lt;K, V&gt;</code>) 常用方法</h4>
+        <p class="note">这些方法也适用于 <code>MutableMap&lt;K, V&gt;</code>。</p>
+        <ul>
+            <li>
+                <strong><code>size</code></strong> (属性): 获取 Map 中键值对的数量。
+                <br><code>println(readOnlyAges.size) // 输出: 3</code>
+            </li>
+            <li>
+                <strong><code>isEmpty()</code></strong>: 判断 Map 是否为空。
+                <br><code>println(readOnlyAges.isEmpty()) // 输出: false</code>
+            </li>
+            <li>
+                <strong><code>get(key: K)</code> 或 <code>[key]</code></strong>: 获取指定键关联的值。如果键不存在，返回 <code>null</code>。
+                <br><code>val aliceAge = readOnlyAges["Alice"] // 30</code>
+                <br><code>val davidAge = readOnlyAges["David"] // null</code>
+            </li>
+            <li>
+                <strong><code>containsKey(key: K)</code></strong>: 检查 Map 是否包含指定的键。
+                <br><code>println(readOnlyAges.containsKey("Bob")) // 输出: true</code>
+            </li>
+            <li>
+                <strong><code>containsValue(value: V)</code></strong>: 检查 Map 是否包含指定的的值。 (此操作可能较慢)
+                <br><code>println(readOnlyAges.containsValue(25)) // 输出: true</code>
+            </li>
+        </ul>
+    </div>
+
+    <div class="container_2">
+        <h4 id="mutable-map-methods">4. 可变 Map (<code>MutableMap&lt;K, V&gt;</code>) 常用方法</h4>
+        <p class="note">这些方法用于修改 Map 内容，因此只适用于 <code>MutableMap&lt;K, V&gt;</code>。</p>
+        <ul>
+            <li>
+                <strong><code>put(key: K, value: V)</code> 或 <code>[key] = value</code></strong>: 向 Map 中添加或更新一个键值对。如果键已存在，旧的值被替换，并返回旧的值；如果键是新的，返回 <code>null</code>。
+                <br><code>mutableScores["History"] = 75 // 添加新条目</code>
+                <br><code>val oldMathScore = mutableScores.put("Math", 92) // 更新条目, oldMathScore 是 90</code>
+            </li>
+            <li>
+                <strong><code>remove(key: K)</code></strong>: 从 Map 中移除指定键及其关联的值。如果键存在并被移除，返回关联的值；否则返回 <code>null</code>。
+                <br><code>val removedScienceScore = mutableScores.remove("Science") // removedScienceScore 是 85</code>
+            </li>
+            <li>
+                <strong><code>clear()</code></strong>: 移除 Map 中的所有键值对。
+                <br><code>mutableScores.clear() // mutableScores 现在是空 Map</code>
+            </li>
+            <li>
+                <strong><code>putAll(from: Map&lt;K, V&gt;)</code></strong>: 将另一个 Map 中的所有键值对添加到当前 Map 中（如果键冲突，则更新）。
+                <br><code>val extraScores = mapOf("Art" to 88, "Music" to 95)</code>
+                <br><code>mutableScores.putAll(extraScores)</code>
+            </li>
+        </ul>
+    </div>
+
+     <div class="container_2">
+        <h4 id="accessing-entries-keys-values">5. 访问条目、键和值</h4>
+        <p class="note">这些属性返回 Map 内容的不同视图 (通常是 Set 或 Collection)。</p>
+        <ul>
+            <li>
+                <strong><code>keys</code></strong> (属性): 返回 Map 中所有键的<strong>只读</strong> <code>Set&lt;K&gt;</code>。
+                <br><code>val names = readOnlyAges.keys // {"Alice", "Bob", "Carol"}</code>
+                <br><code>for (name in names) { println(name) }</code>
+            </li>
+            <li>
+                <strong><code>values</code></strong> (属性): 返回 Map 中所有值的<strong>只读</strong> <code>Collection&lt;V&gt;</code>。
+                <br><code>val ages = readOnlyAges.values // {30, 25, 35}</code>
+                <br><code>for (age in ages) { println(age) }</code>
+            </li>
+            <li>
+                <strong><code>entries</code></strong> (属性): 返回 Map 中所有键值对 (<code>Map.Entry&lt;K, V&gt;</code>) 的<strong>只读</strong> <code>Set&lt;Map.Entry&lt;K, V&gt;&gt;</code>。
+                <br><code>for (entry in readOnlyAges.entries) {</code>
+                <br><code>    println("${entry.key} is ${entry.value} years old.")</code>
+                <br><code>}</code>
+                <br><em>或者使用解构声明:</em>
+                <br><code>for ((name, age) in readOnlyAges) {</code>
+                <br><code>    println("$name is $age years old.")</code>
+                <br><code>}</code>
+            </li>
+        </ul>
+    </div>
+
+    <div class="container_2">
+        <h4 id="common-extensions">6. 通用核心扩展函数</h4>
+        <p class="note">许多作用于集合的扩展函数也适用于 Map，通常作用于其 <code>entries</code>, <code>keys</code>, 或 <code>values</code>。</p>
+        <ul>
+            <li>
+                <strong><code>forEach { (key, value) -> action }</code></strong>: 对 Map 中的每个键值对执行操作。
+                <br><code>readOnlyAges.forEach { (name, age) -> println("$name -> $age") }</code>
+            </li>
+            <li>
+                <strong><code>getOrElse(key: K, defaultValue: () -> V)</code></strong>: 获取指定键的值，如果键不存在，则返回通过 <code>defaultValue</code> lambda 计算的值。
+                <br><code>val eveAge = readOnlyAges.getOrElse("Eve") { 20 } // eveAge is 20</code>
+            </li>
+            <li>
+                <strong><code>getOrDefault(key: K, defaultValue: V)</code></strong>: 获取指定键的值，如果键不存在，则返回指定的 <code>defaultValue</code>。
+                <br><code>val frankAge = readOnlyAges.getOrDefault("Frank", 22) // frankAge is 22</code>
+            </li>
+            <li>
+                <strong><code>filter { (key, value) -> predicate }</code></strong>: 返回一个<strong>新 Map</strong>，包含所有满足条件的键值对。
+                <br><code>val adults = readOnlyAges.filter { (name, age) -> age >= 30 }</code>
+            </li>
+            <li>
+                <strong><code>mapValues { (key, value) -> newValue }</code></strong>: 返回一个<strong>新 Map</strong>，其中键保持不变，值是原始值经过转换函数处理后的结果。
+                <br><code>val descriptions = readOnlyAges.mapValues { (name, age) -> "$name is $age" }</code>
+            </li>
+            <li>
+                <strong><code>mapKeys { (key, value) -> newKey }</code></strong>: 返回一个<strong>新 Map</strong>，其中值保持不变，键是原始键经过转换函数处理后的结果。 (注意键冲突)
+                <br><code>val agesToNames = readOnlyAges.mapKeys { (name, age) -> age } // 如果年龄不唯一，会有键冲突</code>
+            </li>
+             <li>
+                <strong><code>any { (key, value) -> predicate }</code></strong>: 判断 Map 中是否<strong>至少有一个</strong>键值对满足条件。
+            </li>
+            <li>
+                <strong><code>all { (key, value) -> predicate }</code></strong>: 判断 Map 中是否<strong>所有</strong>键值对都满足条件。
+            </li>
+        </ul>
+    </div>
+    <hr>
+    <p class="note"><code>Map</code> 的核心是键值关联。<code>MutableMap</code> 提供了修改这些关联的方法。许多强大的操作是通过扩展函数提供的，允许以声明式的方式处理 Map 数据。</p>
+    </div>
+
+    <hr>
+    <div class="analogy">
+        <p id="section6"><strong>核心区别：</strong></p>
+        <ul>
+            <li><strong>Array</strong>: 大小固定，直接操作内存块，性能特定场景好。</li>
+            <li><strong>Collections (List, Set, Map)</strong>: 更高级，提供丰富操作，通常大小可变 (Mutable版本)。List讲顺序和重复，Set讲不重复，Map讲键值对应。</li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>
