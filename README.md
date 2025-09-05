@@ -5,3 +5,4 @@
 #### [Lambda 表达式](https://fengyacao.github.io/Lambda表达式.html)
 #### [函数引用 (::)](https://fengyacao.github.io/函数引用.html)
 #### [集合和数组 (::)](https://fengyacao.github.io/集合和数组.html)
+#### [类和构造函数 (::)](https://fengyacao.github.io/类和构造函数.html)
