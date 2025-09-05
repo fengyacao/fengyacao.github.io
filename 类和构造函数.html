@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>类及其构造函数详解 (Kotlin)</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            color: #0056b3; /* Android Blue */
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h2 {
+            margin-top: 30px;
+        }
+        code {
+            background-color: #e8e8e8;
+            padding: 0.2em 0.4em;
+            margin: 0;
+            font-size: 0.95em;
+            border-radius: 3px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+        }
+        pre {
+            background-color: #2d2d2d; /* Darcula background */
+            color: #a9b7c6; /* Darcula foreground */
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 0.9em;
+            border: 1px solid #444;
+        }
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+        }
+        .keyword { color: #cc7832; font-weight: bold; } /* Darcula keyword */
+        .type { color: #ffc66d; } /* Darcula type/class name */
+        .string { color: #6a8759; } /* Darcula string */
+        .comment { color: #808080; } /* Darcula comment */
+        .number { color: #6897bb; } /* Darcula number */
+        .function { color: #ffc66d; } /* Darcula function name */
+        .property { color: #9876aa; } /* Darcula property */
+        .annotation { color: #bbb529; } /* Darcula annotation */
+
+
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        strong {
+            color: #007bff;
+        }
+        .note {
+            background-color: #e7f3fe;
+            border-left: 4px solid #2196F3;
+            padding: 10px;
+            margin: 15px 0;
+            font-size: 0.95em;
+        }
+        .toc {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+        .toc h3 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 1px solid #ccc;
+        }
+        .toc ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .toc li a {
+            text-decoration: none;
+            color: #0056b3;
+        }
+        .toc li a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>类及其构造函数详解 (Kotlin)</h1>
+
+        <div class="toc">
+            <h3>目录</h3>
+            <ul>
+                <li><a href="#class-concept">1. 类 (Class)</a>
+                    <ul>
+                        <li><a href="#class-purpose">1.1 类的主要作用</a></li>
+                        <li><a href="#class-kotlin-definition">1.2 Kotlin 中的类定义</a></li>
+                    </ul>
+                </li>
+                <li><a href="#constructor-concept">2. 构造函数 (Constructor)</a>
+                    <ul>
+                        <li><a href="#constructor-purpose">2.1 构造函数的主要职责</a></li>
+                        <li><a href="#primary-constructor">2.2 主构造函数 (Primary Constructor)</a></li>
+                        <li><a href="#secondary-constructor">2.3 次构造函数 (Secondary Constructor)</a></li>
+                    </ul>
+                </li>
+                <li><a href="#summary">3. 总结</a></li>
+            </ul>
+        </div>
+
+        <h2 id="class-concept">1. 类 (Class)</h2>
+        <p>想象一下“类”就像一个<strong>蓝图</strong>或者一个<strong>模板</strong>。这个蓝图描述了一类事物共同拥有的<strong>属性（特征）</strong>和<strong>行为（能做什么）</strong>。</p>
+        <p>例如：</p>
+        <ul>
+            <li><strong>蓝图：“汽车” (Car Class)</strong>
+                <ul>
+                    <li><strong>属性（特征）</strong>：颜色 (<code>color</code>), 品牌 (<code>brand</code>), 型号 (<code>model</code>), 当前速度 (<code>currentSpeed</code>)</li>
+                    <li><strong>行为（能做什么）</strong>：启动 (<code>startEngine()</code>), 加速 (<code>accelerate()</code>), 刹车 (<code>brake()</code>), 获取当前颜色 (<code>getColor()</code>)</li>
+                </ul>
+            </li>
+        </ul>
+        <p>使用这个“汽车”蓝图，你就可以制造出很多辆具体的“汽车”对象（也叫<strong>实例</strong>）。每一辆具体的汽车都会有自己的颜色、品牌等属性值，但它们都遵循“汽车”这个蓝图定义的结构和行为。</p>
+        <ul>
+            <li>一辆红色的法拉利 (一个 Car 对象/实例)</li>
+            <li>一辆黑色的宝马 (另一个 Car 对象/实例)</li>
+        </ul>
+
+        <h3 id="class-purpose">1.1 类的主要作用</h3>
+        <ol>
+            <li><strong>封装 (Encapsulation)</strong>：将数据（属性）和操作这些数据的方法（行为）捆绑在一起，形成一个独立的单元。这有助于隐藏内部实现细节，只暴露必要的接口。</li>
+            <li><strong>抽象 (Abstraction)</strong>：提取现实世界事物的共同特征和行为，忽略不相关的细节，从而简化复杂性。</li>
+            <li><strong>代码复用 (Code Reusability)</strong>：一旦定义了一个类，就可以用它来创建任意多个具有相同结构和行为的对象。</li>
+            <li><strong>创建自定义数据类型</strong>：类允许你定义自己的复杂数据类型，而不仅仅是使用语言内置的基本类型（如整数、字符串等）。</li>
+        </ol>
+<h3 id="class-kotlin-definition">1.2 Kotlin 中的类定义</h3>
+        <pre><code class="language-kotlin"><span class="keyword">class</span> <span class="type">Car</span>(<span class="keyword">var</span> <span class="property">color</span>: <span class="type">String</span>, <span class="keyword">val</span> <span class="property">brand</span>: <span class="type">String</span>) { <span class="comment">// 主构造函数和属性声明</span>
+    <span class="comment">// 属性 (Properties)</span>
+    <span class="keyword">var</span> <span class="property">currentSpeed</span>: <span class="type">Int</span> = <span class="number">0</span>
+        <span class="keyword">private</span> <span class="keyword">set</span> <span class="comment">// currentSpeed 只能在类内部被修改</span>
+
+    <span class="comment">// 行为 (Methods / Functions)</span>
+    <span class="keyword">fun</span> <span class="function">startEngine</span>() {
+        println(<span class="string">"$brand $color car engine started."</span>)
+    }
+
+    <span class="keyword">fun</span> <span class="function">accelerate</span>(<span class="property">increase</span>: <span class="type">Int</span>) {
+        <span class="property">currentSpeed</span> += <span class="property">increase</span>
+        println(<span class="string">"Accelerating. Current speed: $currentSpeed km/h"</span>)
+    }
+
+    <span class="keyword">fun</span> <span class="function">brake</span>() {
+        <span class="property">currentSpeed</span> = <span class="number">0</span>
+        println(<span class="string">"Braking. Car stopped."</span>)
+    }
+}
+
+<span class="keyword">fun</span> <span class="function">main</span>() {
+    <span class="comment">// 使用类创建对象 (实例)</span>
+    <span class="keyword">val</span> <span class="property">myCar</span> = <span class="type">Car</span>(<span class="string">"Red"</span>, <span class="string">"Ferrari"</span>) <span class="comment">// 调用构造函数</span>
+    <span class="keyword">val</span> <span class="property">anotherCar</span> = <span class="type">Car</span>(<span class="string">"Black"</span>, <span class="string">"BMW"</span>)
+
+    println(<span class="property">myCar</span>.<span class="property">brand</span>) <span class="comment">// 输出: Ferrari</span>
+    <span class="property">myCar</span>.<span class="function">startEngine</span>()
+    <span class="property">myCar</span>.<span class="function">accelerate</span>(<span class="number">50</span>)
+
+    <span class="property">anotherCar</span>.<span class="function">startEngine</span>()
+}
+</code></pre>
+
+        <h2 id="constructor-concept">2. 构造函数 (Constructor)</h2>
+        <p><strong>构造函数是一个特殊的方法，它的主要目的是创建和初始化类的对象（实例）。</strong> 当你使用 <code>new</code> 关键字（在某些语言中，如 Java）或者直接调用类名（如在 Kotlin 中）来创建一个对象时，实际上就是在调用这个类的构造函数。</p>
+
+        <h3 id="constructor-purpose">2.1 构造函数的主要职责</h3>
+        <ol>
+            <li><strong>分配内存</strong>：为新对象分配存储空间。</li>
+            <li><strong>初始化属性</strong>：给对象的属性设置初始值。这些初始值可以是你直接提供的，也可以是默认值，或者是通过一些计算得来的。</li>
+        </ol>
+
+        <p><strong>Kotlin 中的构造函数有两种类型：</strong></p>
+
+        <h3 id="primary-constructor">2.2 主构造函数 (Primary Constructor)</h3>
+        <ul>
+            <li><strong>定义位置</strong>：紧跟在类名后面，用括号 <code>()</code> 包裹。</li>
+            <li><strong>简洁性</strong>：Kotlin 的主构造函数非常简洁，可以直接在其中声明和初始化属性。</li>
+            <li><strong>唯一性</strong>：一个类最多只能有一个主构造函数。</li>
+            <li><strong>参数</strong>：主构造函数的参数可以直接用 <code>val</code> (只读属性) 或 <code>var</code> (可变属性) 来声明，这样 Kotlin 会自动为这些参数创建对应的属性并用传入的值初始化它们。</li>
+        </ul>
+        <pre><code class="language-kotlin"><span class="keyword">class</span> <span class="type">Person</span>(<span class="keyword">val</span> <span class="property">name</span>: <span class="type">String</span>, <span class="keyword">var</span> <span class="property">age</span>: <span class="type">Int</span>) { <span class="comment">// 主构造函数</span>
+        <span class="comment">// 'name' 是一个只读属性，'age' 是一个可变属性</span>
+        <span class="comment">// 它们会由构造函数传入的值自动初始化</span>
+    }
+
+    <span class="keyword">val</span> <span class="property">person</span> = <span class="type">Person</span>(<span class="string">"Alice"</span>, <span class="number">30</span>) <span class="comment">// 调用主构造函数</span>
+    println(<span class="property">person</span>.<span class="property">name</span>) <span class="comment">// Alice</span>
+    <span class="property">person</span>.<span class="property">age</span> = <span class="number">31</span>      <span class="comment">// 可以修改 age</span>
+</code></pre>
+        <ul>
+            <li><strong>初始化块 (<code>init</code> block)</strong>：如果主构造函数需要更复杂的初始化逻辑（比如打印日志、进行一些计算来初始化其他属性等），可以使用 <code>init</code> 关键字声明一个或多个初始化块。初始化块中的代码会在对象创建时，在主构造函数执行后（属性初始化后）执行。</li>
+        </ul>
+        <pre><code class="language-kotlin"><span class="keyword">class</span> <span class="type">Customer</span>(<span class="keyword">val</span> <span class="property">id</span>: <span class="type">Int</span>, <span class="property">name</span>: <span class="type">String</span>) {
+        <span class="keyword">val</span> <span class="property">customerName</span>: <span class="type">String</span> <span class="comment">// 另一个属性</span>
+
+        <span class="keyword">init</span> { <span class="comment">// 初始化块</span>
+            println(<span class="string">"Customer object created with id: $id"</span>)
+            <span class="property">customerName</span> = <span class="property">name</span>.<span class="function">uppercase</span>() <span class="comment">// 基于构造函数参数进行初始化</span>
+            <span class="keyword">if</span> (<span class="property">id</span> < <span class="number">0</span>) {
+                <span class="keyword">throw</span> <span class="type">IllegalArgumentException</span>(<span class="string">"Customer ID cannot be negative."</span>)
+            }
+        }
+
+        <span class="comment">// 如果主构造函数参数没有 val/var，它就只是一个参数，不会成为属性</span>
+        <span class="comment">// 除非你在类体中显式声明一个同名属性并用它初始化</span>
+        <span class="keyword">val</span> <span class="property">initialName</span> = <span class="property">name</span> <span class="comment">// 'name' 是构造函数参数，initialName 是一个属性</span>
+
+        <span class="keyword">fun</span> <span class="function">greet</span>() {
+            println(<span class="string">"Hello, $customerName (ID: $id, Initial: $initialName)"</span>)
+        }
+    }
+
+    <span class="keyword">val</span> <span class="property">cust</span> = <span class="type">Customer</span>(<span class="number">1</span>, <span class="string">"Bob"</span>)
+    <span class="property">cust</span>.<span class="function">greet</span>() <span class="comment">// Hello, BOB (ID: 1, Initial: Bob)</span>
+</code></pre>
+<h3 id="secondary-constructor">2.3 次构造函数 (Secondary Constructor)</h3>
+        <ul>
+            <li><strong>定义位置</strong>：在类体内部，使用 <code>constructor</code> 关键字声明。</li>
+            <li><strong>目的</strong>：提供创建对象的不同方式，或者在创建对象时执行一些与主构造函数不同的初始化逻辑。</li>
+            <li><strong>委托给主构造函数（或另一个次构造函数）</strong>：如果一个类有主构造函数，那么<strong>所有</strong>的次构造函数都必须<strong>直接或间接地委托</strong>给主构造函数。这是通过 <code>this(...)</code> 关键字实现的。委托的目的是确保主构造函数中的初始化逻辑（包括 <code>init</code> 块）总是被执行。</li>
+        </ul>
+        <pre><code class="language-kotlin"><span class="keyword">class</span> <span class="type">Order</span>(<span class="keyword">val</span> <span class="property">orderId</span>: <span class="type">String</span>) { <span class="comment">// 主构造函数</span>
+        <span class="keyword">var</span> <span class="property">items</span>: <span class="type">List</span>&lt;<span class="type">String</span>&gt; = <span class="function">emptyList</span>()
+        <span class="keyword">var</span> <span class="property">customerName</span>: <span class="type">String</span>? = <span class="keyword">null</span>
+
+        <span class="keyword">init</span> {
+            println(<span class="string">"Order $orderId initialized."</span>)
+        }
+
+        <span class="comment">// 次构造函数 1: 接受订单ID和商品列表</span>
+        <span class="keyword">constructor</span>(<span class="property">orderId</span>: <span class="type">String</span>, <span class="property">initialItems</span>: <span class="type">List</span>&lt;<span class="type">String</span>&gt;) : <span class="keyword">this</span>(<span class="property">orderId</span>) { <span class="comment">// 委托给主构造函数</span>
+            println(<span class="string">"Secondary constructor 1 called."</span>)
+            <span class="keyword">this</span>.<span class="property">items</span> = <span class="property">initialItems</span>
+        }
+
+        <span class="comment">// 次构造函数 2: 接受订单ID, 商品列表和顾客姓名</span>
+        <span class="keyword">constructor</span>(<span class="property">orderId</span>: <span class="type">String</span>, <span class="property">initialItems</span>: <span class="type">List</span>&lt;<span class="type">String</span>&gt;, <span class="property">customer</span>: <span class="type">String</span>) : <span class="keyword">this</span>(<span class="property">orderId</span>, <span class="property">initialItems</span>) { <span class="comment">// 委托给次构造函数1</span>
+            println(<span class="string">"Secondary constructor 2 called."</span>)
+            <span class="keyword">this</span>.<span class="property">customerName</span> = <span class="property">customer</span>
+        }
+    }
+
+    <span class="keyword">fun</span> <span class="function">main</span>() {
+        <span class="keyword">val</span> <span class="property">order1</span> = <span class="type">Order</span>(<span class="string">"ORD001"</span>)
+        <span class="comment">// 输出: Order ORD001 initialized.</span>
+
+        <span class="keyword">val</span> <span class="property">order2</span> = <span class="type">Order</span>(<span class="string">"ORD002"</span>, <span class="function">listOf</span>(<span class="string">"Laptop"</span>, <span class="string">"Mouse"</span>))
+        <span class="comment">// 输出:</span>
+        <span class="comment">// Order ORD002 initialized.</span>
+        <span class="comment">// Secondary constructor 1 called.</span>
+
+        <span class="keyword">val</span> <span class="property">order3</span> = <span class="type">Order</span>(<span class="string">"ORD003"</span>, <span class="function">listOf</span>(<span class="string">"Keyboard"</span>), <span class="string">"Alice"</span>)
+        <span class="comment">// 输出:</span>
+        <span class="comment">// Order ORD003 initialized.</span>
+        <span class="comment">// Secondary constructor 1 called.</span>
+        <span class="comment">// Secondary constructor 2 called.</span>
+    }
+</code></pre>
+        <ul>
+            <li><strong>没有主构造函数的情况</strong>：如果一个类没有主构造函数（例如，接口的实现类或者某些特殊场景），那么次构造函数就不需要（也不能）委托给主构造函数。但如果存在多个次构造函数，它们之间仍然可以相互委托。</li>
+        </ul>
+
+        <h2 id="summary">3. 总结</h2>
+        <p>理解类和构造函数是学习任何面向对象编程语言的基础。Kotlin 在这方面提供了非常简洁和强大的语法，使得类的定义和对象的创建更加方便和易读。</p>
+        <ul>
+            <li><strong>主构造函数</strong>：简洁，用于主要的、最常见的对象初始化方式，可以直接声明属性。</li>
+            <li><strong>初始化块 (<code>init</code>)</strong>：配合主构造函数，用于执行更复杂的初始化逻辑。</li>
+            <li><strong>次构造函数</strong>：提供额外的对象创建方式，必须委托给主构造函数（如果存在）。</li>
+        </ul>
+         <div class="note">
+            <p><strong>关键点:</strong></p>
+            <ul>
+                <li>类是创建对象的蓝图。</li>
+                <li>构造函数负责初始化对象。</li>
+                <li>Kotlin 的主构造函数非常强大，可以直接在类头声明属性。</li>
+                <li><code>init</code> 块用于主构造函数的额外初始化逻辑。</li>
+                <li>次构造函数提供备选的初始化方式，并需要委托给主构造函数（若存在）。</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
